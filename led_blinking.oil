@@ -20,7 +20,7 @@ CPU test {
       ASSEMBLER = "avr-gcc";
       COPIER = "avr-objcopy";
       SYSTEM = PYTHON;
-      LIBRARY = serial;
+      // LIBRARY = serial;
     };
     SYSTEM_CALL = TRUE;
   };
@@ -39,7 +39,7 @@ CPU test {
     };
     AUTOSTART = TRUE {
       ALARMTIME = 975; //activated each 1000 ms
-      CYCLETIME = 975; //activated each 1000 ms
+      CYCLETIME = 98; //activated each 1000 ms
       APPMODE = stdAppmode;
     };
   };
