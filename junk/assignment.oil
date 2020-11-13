@@ -1,10 +1,3 @@
-/* Running the following example:
- * just call goil a first time using the command line:
- * goil --target=avr/arduino/uno --templates=../../../../goil/templates/ blink.oil
- * you may have to update ARDUINO section (l.13) for your configuration.
- *
- */
-
 OIL_VERSION = "2.5" : "test" ;
 
 CPU test {    
@@ -13,7 +6,7 @@ CPU test {
     BUILD = TRUE {
       TRAMPOLINE_BASE_PATH = "../../../..";
       APP_NAME = "trampuinoBlink";
-      APP_SRC = "led_blinking.cpp";
+      APP_SRC = "blink.cpp";
       CPPCOMPILER = "avr-g++";
       COMPILER = "avr-gcc";
       LINKER = "avr-gcc";
@@ -26,33 +19,59 @@ CPU test {
   };
 
   APPMODE stdAppmode {};
-  
-  EVENT evento{
+
+  EVENT one_sec{
     MASK = AUTO;
   };
 
+  /* 
   ALARM periodicAl {
     COUNTER= SystemCounter;
-    ACTION = SETEVENT {
+    ACTION = ACTIVATETASK {
       TASK = periodicTask;
-      EVENT = evento;
     };
     AUTOSTART = TRUE {
-      ALARMTIME = 975; //activated each 1000 ms
-      CYCLETIME = 975; //activated each 1000 ms
+      ALARMTIME = 975; //activated each 100ms
+      CYCLETIME = 975; //activated each 100ms
+      APPMODE = stdAppmode;
+    };
+  };
+  */
+
+
+  /*
+  TASK periodicTask {
+    PRIORITY = 1;
+    AUTOSTART = FALSE;
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    STACKSIZE = 256;
+  };
+  */
+
+
+  ALARM eventAl {
+    COUNTER= SystemCounter;
+    ACTION = SETEVENT {
+      TASK = eventTask;
+      EVENT = one_sec;
+    };
+    AUTOSTART = TRUE {
+      ALARMTIME = 1; //activated each 100ms
+      CYCLETIME = 975; //activated each 100ms
       APPMODE = stdAppmode;
     };
   };
 
-  TASK periodicTask {
-    PRIORITY = 20;
+  TASK eventTask {
+    PRIORITY = 1;
     AUTOSTART = TRUE{
-       APPMODE = stdAppmode;
+      APPMODE = stdAppmode;
     };
     ACTIVATION = 1;
     SCHEDULE = FULL;
     STACKSIZE = 256;
-    EVENT = evento;
+    EVENT = one_sec;
   };
 
 };
