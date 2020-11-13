@@ -13,7 +13,7 @@ CPU test {
     BUILD = TRUE {
       TRAMPOLINE_BASE_PATH = "../../../..";
       APP_NAME = "trampuinoBlink";
-      APP_SRC = "blink.cpp";
+      APP_SRC = "led_blinking.cpp";
       CPPCOMPILER = "avr-g++";
       COMPILER = "avr-gcc";
       LINKER = "avr-gcc";
