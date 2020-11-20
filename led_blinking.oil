@@ -1,0 +1,58 @@
+/* Running the following example:
+ * just call goil a first time using the command line:
+ * goil --target=avr/arduino/uno --templates=../../../../goil/templates/ blink.oil
+ * you may have to update ARDUINO section (l.13) for your configuration.
+ *
+ */
+
+OIL_VERSION = "2.5" : "test" ;
+
+CPU test {    
+  OS config {
+    STATUS = STANDARD;
+    BUILD = TRUE {
+      TRAMPOLINE_BASE_PATH = "../../../..";
+      APP_NAME = "trampuinoBlink";
+      APP_SRC = "led_blinking.cpp";
+      CPPCOMPILER = "avr-g++";
+      COMPILER = "avr-gcc";
+      LINKER = "avr-gcc";
+      ASSEMBLER = "avr-gcc";
+      COPIER = "avr-objcopy";
+      SYSTEM = PYTHON;
+      // LIBRARY = serial;
+    };
+    SYSTEM_CALL = TRUE;
+  };
+
+  APPMODE stdAppmode {};
+  
+  EVENT evento{
+    MASK = AUTO;
+  };
+
+  ALARM periodicAl {
+    COUNTER= SystemCounter;
+    ACTION = SETEVENT {
+      TASK = periodicTask;
+      EVENT = evento;
+    };
+    AUTOSTART = TRUE {
+      ALARMTIME = 975; //activated each 1000 ms
+      CYCLETIME = 975; //activated each 1000 ms
+      APPMODE = stdAppmode;
+    };
+  };
+
+  TASK periodicTask {
+    PRIORITY = 20;
+    AUTOSTART = TRUE{
+       APPMODE = stdAppmode;
+    };
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    STACKSIZE = 256;
+    EVENT = evento;
+  };
+
+};
