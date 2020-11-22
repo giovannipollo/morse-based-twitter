@@ -4,7 +4,7 @@
 #define NUMFRASI 5
 #define MAXCNT 50
 
-// #define DEBUG
+#define DEBUG
 
 static const char *alfabeto[] = {
     ".-",   //A
@@ -35,6 +35,16 @@ static const char *alfabeto[] = {
     "--..", //Z
 };
 
+static const char *frasi[] = {
+    "A FEATHER IN THE HAND IS BETTER THAN A BIRD IN THE AIR",
+    "A SHORT PENCIL IS USUALLY BETTER THAN A LONG MEMORY ANY DAY",
+    "ACCEPT SOMETHING THAT YOU CANNOT CHANGE AND YOU WILL FEEL BETTER",
+    "ADVENTURE CAN BE REAL HAPPINESS",
+    "ALL THE EFFORT YOU ARE MAKING WILL ULTIMATELY PAY OFF",
+};
+
+static char LED[16];
+
 uint8 string_lenght(const char *string) {
     uint8 i = 0;
     while (string[i] != '\0') {
@@ -43,16 +53,14 @@ uint8 string_lenght(const char *string) {
     return i;
 }
 
-static const char *frasi[] = {
-    //"A FEATHER IN THE HAND IS BETTER THAN A BIRD IN THE AIR",
-    "Q Q Q Q",
-    "A SHORT PENCIL IS USUALLY BETTER THAN A LONG MEMORY ANY DAY",
-    "ACCEPT SOMETHING THAT YOU CANNOT CHANGE AND YOU WILL FEEL BETTER",
-    "ADVENTURE CAN BE REAL HAPPINESS",
-    "ALL THE EFFORT YOU ARE MAKING WILL ULTIMATELY PAY OFF",
-};
+void populateLED(char value, uint8 num_volte, uint8 *index) {
+    uint8 i;
+    for (i = *index; i < num_volte + *index; i++) {
+        LED[i] = value;
+    }
+    *index = i;
+}
 
-static char LED[21];
 void setup() {
 
 #ifdef DEBUG
@@ -62,81 +70,68 @@ void setup() {
     pinMode(13, OUTPUT);
 }
 
-void populateLED(char value, int num_volte, uint8 *index) {
-    int i;
-    for (i = *index; i < num_volte + *index; i++) {
-        LED[i] = value;
-    }
-    *index = i;
-}
-
 TASK(periodicTask) {
 
     uint8 index = 0;
     uint16 cnt = 0;
-    uint8 pos = 0;
-    uint8 k = 0;
-    uint8 i = 0;
-    uint8 l, m;
+    int pos = 0;
+    uint8 i, j, k;
     EventMaskType mask;
 #ifdef DEBUG
     Serial.println("");
 #endif
     while (1) {
-        while (k < NUMFRASI) {
+        i = 0;
+        while (i < NUMFRASI) {
 
 #ifdef DEBUG
             Serial.print("Numero Frase: ");
-            Serial.println(k);
+            Serial.println(i);
             Serial.print("Lunghezza Frase: ");
-            Serial.println(string_lenght(frasi[k]));
+            Serial.println(string_lenght(frasi[i]));
 
 #endif
-            while (i < string_lenght(frasi[k])) {
-                pos = frasi[k][i] - 'A';
+            j = 0;
+            while (j < string_lenght(frasi[i])) {
+                pos = frasi[i][j] - 'A';
 #ifdef DEBUG
                 Serial.print("Lettera: ");
-                Serial.print(frasi[k][i]);
+                Serial.print(frasi[i][j]);
                 Serial.print("      Posizione: ");
                 Serial.println(pos);
 #endif
-                l = 0;
-                while (l < string_lenght(alfabeto[pos])) {
-                    if (alfabeto[pos][l] == '.') {
+                k = 0;
+                while (pos >= 0 && k < string_lenght(alfabeto[pos])) {
+                    if (alfabeto[pos][k] == '.')
                         populateLED('1', 1, &index);
-                    } else {
+                    else
                         populateLED('1', 3, &index);
-                    }
+
                     populateLED('0', 1, &index); // 0 at the end of the symbol
-                    l++;
-                }
-                populateLED('0', 2, &index); // 0 at the end of the codeword
+                    k++;
 
-                if (i == string_lenght(frasi[k]) - 1) {
-                    i = 0;
-                    populateLED('0', 4, &index); // 0 at the end of the sentence
-                } else {
-                    i++; // increment i if I'm not at the end of the word
+                    if (k == string_lenght(alfabeto[pos]))
+                        populateLED('0', 2, &index); // 0 at the end of the codeword
                 }
 
-                if (frasi[k][i] == 32) {
-                    i++;                         // increment because I have a space
+                if (frasi[i][j] == 32 || frasi[i][j] == '\0')
                     populateLED('0', 4, &index); // 0 because of a space
-                }
+
+                j++;
 
 #ifdef DEBUG
                 Serial.print("Lunghezza: ");
-                Serial.println(string_lenght(LED));
+                Serial.println(index);
 #endif
 
                 // write value of leds
-                m = 0;
-                while (m < index && cnt < MAXCNT) {
+                k = 0;
+                while (k < index && cnt < MAXCNT) {
                     WaitEvent(evento);
                     GetEvent(periodicTask, &mask);
                     if (mask) {
                         ClearEvent(evento);
-                        if (LED[m] == '1') {
+                        if (LED[k] == '1') {
                             digitalWrite(13, HIGH);
 #ifdef DEBUG
                             Serial.print("1");
@@ -152,7 +147,7 @@ TASK(periodicTask) {
 #endif
                         }
                         cnt++;
-                        m++;
+                        k++;
                     }
                 }
                 index = 0; // because I finish a codeword
@@ -160,26 +155,22 @@ TASK(periodicTask) {
                 // pause
 
                 if (cnt == MAXCNT) {
-                    i = string_lenght(frasi[k]); // così da uscire dal loop
+                    j = string_lenght(frasi[i]); // così da uscire dal loop
                     cnt = 0;
-                    for (int j = 0; j < 5; j++) {
+                    digitalWrite(13, LOW);
+                    k = 0;
+                    while (k < 5) {
                         WaitEvent(evento);
                         GetEvent(periodicTask, &mask);
-                        if (mask) {
-                            ClearEvent(evento);
-                            digitalWrite(13, LOW);
+                        ClearEvent(evento);
+                        k++;
 #ifdef DEBUG
-                            Serial.println("0         Pause");
+                        Serial.println("0         Pause");
 #endif
-                        }
                     }
                 }
             }
-            if (k == NUMFRASI - 1) {
-                k = 0; // Reset because I reach the end of all phrases
-            } else {
-                k++;
-            }
+            i++;
         }
     }
 }
