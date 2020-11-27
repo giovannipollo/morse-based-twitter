@@ -1,10 +1,11 @@
 #include "Arduino.h"
 #include "tpl_os.h"
 
+// define the number of setences and the value of the CNT for the pause
 #define NUMFRASI 5
-#define MAXCNT 50
+#define MAXCNT 600
 
-#define DEBUG
+// #define DEBUG
 
 static const char *alfabeto[] = {
     ".-",   //A
@@ -37,13 +38,14 @@ static const char *alfabeto[] = {
 
 static const char *frasi[] = {
     "A FEATHER IN THE HAND IS BETTER THAN A BIRD IN THE AIR",
+    //"CIAQ",
     "A SHORT PENCIL IS USUALLY BETTER THAN A LONG MEMORY ANY DAY",
     "ACCEPT SOMETHING THAT YOU CANNOT CHANGE AND YOU WILL FEEL BETTER",
     "ADVENTURE CAN BE REAL HAPPINESS",
     "ALL THE EFFORT YOU ARE MAKING WILL ULTIMATELY PAY OFF",
 };
 
-static char LED[16];
+static char LED[20];
 
 uint8 string_lenght(const char *string) {
     uint8 i = 0;
@@ -62,7 +64,6 @@ void populateLED(char value, uint8 num_volte, uint8 *index) {
 }
 
 void setup() {
-
 #ifdef DEBUG
     Serial.begin(115200);
 #endif
@@ -82,8 +83,8 @@ TASK(periodicTask) {
 #endif
     while (1) {
         i = 0;
+        //loop on all sentences
         while (i < NUMFRASI) {
-
 #ifdef DEBUG
             Serial.print("Numero Frase: ");
             Serial.println(i);
@@ -92,6 +93,7 @@ TASK(periodicTask) {
 
 #endif
             j = 0;
+            // loop on one sentence
             while (j < string_lenght(frasi[i])) {
                 pos = frasi[i][j] - 'A';
 #ifdef DEBUG
@@ -101,11 +103,13 @@ TASK(periodicTask) {
                 Serial.println(pos);
 #endif
                 k = 0;
+                // pos >= 0 is used ot avoid looping in case I have a space. In fact space is 32 in ascii and 32 - 'A' is < 0.
+                // So I loop only if pos is >= 0
                 while (pos >= 0 && k < string_lenght(alfabeto[pos])) {
                     if (alfabeto[pos][k] == '.')
-                        populateLED('1', 1, &index);
+                        populateLED('1', 1, &index); // 1 for the symbol .
                     else
-                        populateLED('1', 3, &index);
+                        populateLED('1', 3, &index); // 1 for the symbol -
 
                     populateLED('0', 1, &index); // 0 at the end of the symbol
                     k++;
@@ -114,8 +118,8 @@ TASK(periodicTask) {
                         populateLED('0', 2, &index); // 0 at the end of the codeword
                 }
 
-                if (frasi[i][j] == 32 || frasi[i][j] == '\0')
-                    populateLED('0', 4, &index); // 0 because of a space
+                if (frasi[i][j] == 32 || j == string_lenght(frasi[i]) - 1)
+                    populateLED('0', 4, &index); // 0 because of a space or because I finish the sentence
 
                 j++;
 
@@ -152,12 +156,12 @@ TASK(periodicTask) {
                 }
                 index = 0; // because I finish a codeword
 
-                // pause
-
+                // pause if cnt is equal to MAXCNT
                 if (cnt == MAXCNT) {
-                    j = string_lenght(frasi[i]); // così da uscire dal loop
-                    cnt = 0;
-                    digitalWrite(13, LOW);
+                    j = string_lenght(frasi[i + 1]); // set j to the lenght of the sentence so that we exit from the while loop
+                    cnt = 0;                         // reset the counter
+                    i++;                             // when I exit from the while loop (after the pause) I need to go to the next sentence. So I increase the value of i
+                    digitalWrite(13, LOW);           // switch off the LED
                     k = 0;
                     while (k < 5) {
                         WaitEvent(evento);
@@ -170,7 +174,6 @@ TASK(periodicTask) {
                     }
                 }
             }
-            i++;
         }
     }
 }
