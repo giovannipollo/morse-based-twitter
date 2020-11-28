@@ -20,7 +20,7 @@ CPU test {
       ASSEMBLER = "avr-gcc";
       COPIER = "avr-objcopy";
       SYSTEM = PYTHON;
-      // LIBRARY = serial;
+      LIBRARY = serial;
     };
     SYSTEM_CALL = TRUE;
   };
@@ -50,9 +50,8 @@ CPU test {
        APPMODE = stdAppmode;
     };
     ACTIVATION = 1;
-    STACKSIZE = 128;
+    STACKSIZE = 112;
     SCHEDULE = FULL;
     EVENT = evento;
   };
-
 };

@@ -3,9 +3,9 @@
 
 // define the number of setences and the value of the CNT for the pause
 #define NUMFRASI 5
-#define MAXCNT 600
+#define MAXCNT 1800
 
-// #define DEBUG
+#define DEBUG
 
 static const char *alfabeto[] = {
     ".-",   //A
@@ -38,7 +38,6 @@ static const char *alfabeto[] = {
 
 static const char *frasi[] = {
     "A FEATHER IN THE HAND IS BETTER THAN A BIRD IN THE AIR",
-    //"CIAQ",
     "A SHORT PENCIL IS USUALLY BETTER THAN A LONG MEMORY ANY DAY",
     "ACCEPT SOMETHING THAT YOU CANNOT CHANGE AND YOU WILL FEEL BETTER",
     "ADVENTURE CAN BE REAL HAPPINESS",
@@ -158,10 +157,14 @@ TASK(periodicTask) {
 
                 // pause if cnt is equal to MAXCNT
                 if (cnt == MAXCNT) {
-                    j = string_lenght(frasi[i + 1]); // set j to the lenght of the sentence so that we exit from the while loop
-                    cnt = 0;                         // reset the counter
-                    i++;                             // when I exit from the while loop (after the pause) I need to go to the next sentence. So I increase the value of i
-                    digitalWrite(13, LOW);           // switch off the LED
+
+                    // Increment i before calculating j because the condition of the while statement is based on i.
+                    // So I need to compute j with the incremented value.
+                    i++;
+                    j = string_lenght(frasi[i]);
+
+                    cnt = 0;               // reset the counter
+                    digitalWrite(13, LOW); // switch off the LED
                     k = 0;
                     while (k < 5) {
                         WaitEvent(evento);
