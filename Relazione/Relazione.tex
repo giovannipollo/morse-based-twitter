@@ -1,0 +1,37 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+\usepackage{titling}
+
+\title{\Huge Assignment OSEK}
+\author{\huge Giovanni Pollo \\ \\ \huge 290136}
+\date{}
+\renewcommand\maketitlehooka{
+  \begin{center}
+    \includegraphics[width=0.65\textwidth]{Immagini/LogoPolito.png}
+  \end{center}%
+}
+
+\begin{document}
+\begin{titlepage}
+    \centering
+    \vspace{2px}
+\end{titlepage}
+\maketitle
+
+\newpage
+
+\section{Structure}
+The structure chosen is based on an extended task. There is an event, that is triggered every \(100\ ms\) and it is used to guarantee the timing of the system.
+
+The conversion is done online, thanks to the global variable \emph{LED}. The external loop is used to read all sentences while the internal one is used to analyze letter by letter. Every letter is compared to the character 'A', and the value of \emph{pos} is computed.
+
+After having obtained \emph{pos}, we can get the morse code of the letter and then convert it into a sequence of 0 and 1, that it is saved in the variable \emph{LED} thanks to the \textbf{populateLED} function.
+
+The \(180\ s\) pause is implemented using a counter (variable \emph{cnt}) that counts up to 1800. In fact:
+\begin{equation}
+    max\_cnt\_value = \frac{pause\_time}{event\_time} = \frac{180\ s}{0,1\ s} = 1800
+\end{equation}
+
+As shown in the formula
+
+\end{document}
