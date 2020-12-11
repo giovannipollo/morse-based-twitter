@@ -6,7 +6,7 @@
 #define MAXCNT 1800
 
 #define DEBUG
-
+unsigned long timeinizio, timefine, time180inizio, time180fine;
 static const char *alfabeto[] = {
     ".-",   //A
     "-...", //B
@@ -75,6 +75,7 @@ TASK(periodicTask) {
     uint8 index = 0;
     uint16 cnt = 0;
     int pos = 0;
+    int primo_giro = 1;
     uint8 i, j, k;
     EventMaskType mask;
 #ifdef DEBUG
@@ -93,6 +94,7 @@ TASK(periodicTask) {
 #endif
             j = 0;
             // loop on one sentence
+
             while (j < string_lenght(frasi[i])) {
                 pos = frasi[i][j] - 'A';
 #ifdef DEBUG
@@ -130,8 +132,13 @@ TASK(periodicTask) {
                 // write value of leds
                 k = 0;
                 while (k < index && cnt < MAXCNT) {
+                    timeinizio = micros();
                     WaitEvent(evento);
                     GetEvent(periodicTask, &mask);
+                    if (primo_giro) {
+                        time180inizio = micros();
+                        primo_giro = 0;
+                    }
                     if (mask) {
                         ClearEvent(evento);
                         if (LED[k] == '1') {
@@ -139,16 +146,19 @@ TASK(periodicTask) {
 #ifdef DEBUG
                             Serial.print("1");
                             Serial.print("         cnt = ");
-                            Serial.println(cnt);
+                            Serial.print(cnt);
 #endif
                         } else {
                             digitalWrite(13, LOW);
 #ifdef DEBUG
                             Serial.print("0");
                             Serial.print("         cnt = ");
-                            Serial.println(cnt);
+                            Serial.print(cnt);
 #endif
                         }
+                        timefine = micros();
+                        Serial.print("          Time difference 100000us: ");
+                        Serial.println(timefine - timeinizio);
                         cnt++;
                         k++;
                     }
@@ -160,9 +170,12 @@ TASK(periodicTask) {
 
                     // Increment i before calculating j because the condition of the while statement is based on i.
                     // So I need to compute j with the incremented value.
+                    time180fine = micros();
+                    Serial.print("          Time difference 180000000us: ");
+                    Serial.println(time180fine - time180inizio);
                     i++;
                     j = string_lenght(frasi[i]);
-
+                    timeinizio = micros();
                     cnt = 0;               // reset the counter
                     digitalWrite(13, LOW); // switch off the LED
                     k = 0;
@@ -175,6 +188,11 @@ TASK(periodicTask) {
                         Serial.println("0         Pause");
 #endif
                     }
+                    timefine = micros();
+                    Serial.print("          Time difference 500000us: ");
+                    Serial.println(timefine - timeinizio);
+                    time180inizio = micros();
+                    primo_giro = 1;
                 }
             }
         }

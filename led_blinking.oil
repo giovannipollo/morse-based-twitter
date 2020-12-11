@@ -38,8 +38,8 @@ CPU test {
       EVENT = evento;
     };
     AUTOSTART = TRUE {
-      ALARMTIME = 975; //activated each 1000 ms
-      CYCLETIME = 98; //activated each 1000 ms
+      ALARMTIME = 975; //activated the first time after 1000 ms = 1s
+      CYCLETIME = 98; //activated each 100 ms
       APPMODE = stdAppmode;
     };
   };
