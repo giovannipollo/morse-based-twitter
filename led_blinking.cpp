@@ -3,10 +3,25 @@
 
 // define the number of setences and the value of the CNT for the pause
 #define NUMFRASI 5
-#define MAXCNT 1800
+#define MAXCNT 50
 
-#define DEBUG
-unsigned long timeinizio, timefine, time180inizio, time180fine;
+// #define DEBUG
+// #define DEBUG180
+// #define DEGUB1
+// #define DEBUG5
+
+#ifdef DEBUG180
+unsigned long time180inizio, time180fine;
+#endif
+
+#ifdef DEBUG1
+unsigned long time1inizio, time1fine;
+#endif
+
+#ifdef DEBUG5
+unsigned long time5inizio, time5fine;
+#endif
+
 static const char *alfabeto[] = {
     ".-",   //A
     "-...", //B
@@ -66,6 +81,7 @@ void setup() {
 #ifdef DEBUG
     Serial.begin(115200);
 #endif
+    Serial.begin(115200);
     // initialize digital pin 13 as an output.
     pinMode(13, OUTPUT);
 }
@@ -75,7 +91,16 @@ TASK(periodicTask) {
     uint8 index = 0;
     uint16 cnt = 0;
     int pos = 0;
+
+#ifdef DEBUG180
     int primo_giro = 1;
+#endif
+
+#ifdef DEBUG5
+    int valore = 0;
+    int prima_volta = 1;
+#endif
+
     uint8 i, j, k;
     EventMaskType mask;
 #ifdef DEBUG
@@ -132,13 +157,33 @@ TASK(periodicTask) {
                 // write value of leds
                 k = 0;
                 while (k < index && cnt < MAXCNT) {
-                    timeinizio = micros();
+#ifdef DEBUG1
+                    time1inizio = micros();
+#endif
                     WaitEvent(evento);
                     GetEvent(periodicTask, &mask);
+#ifdef DEBUG1
+                    time1fine = micros();
+                    Serial.print("          Time difference 100000us: ");
+                    Serial.println(time1fine - time1inizio);
+#endif
+
+#ifdef DEBUG180
                     if (primo_giro) {
                         time180inizio = micros();
                         primo_giro = 0;
                     }
+#endif
+#ifdef DEBUG5
+                    if (valore) {
+                        time5fine = micros();
+                        Serial.print("          Time difference 500000us: ");
+                        Serial.println(time5fine - time5inizio);
+                        valore = 0;
+                        prima_volta = 1;
+                    }
+#endif
+
                     if (mask) {
                         ClearEvent(evento);
                         if (LED[k] == '1') {
@@ -146,19 +191,16 @@ TASK(periodicTask) {
 #ifdef DEBUG
                             Serial.print("1");
                             Serial.print("         cnt = ");
-                            Serial.print(cnt);
+                            Serial.println(cnt);
 #endif
                         } else {
                             digitalWrite(13, LOW);
 #ifdef DEBUG
                             Serial.print("0");
                             Serial.print("         cnt = ");
-                            Serial.print(cnt);
+                            Serial.println(cnt);
 #endif
                         }
-                        timefine = micros();
-                        Serial.print("          Time difference 100000us: ");
-                        Serial.println(timefine - timeinizio);
                         cnt++;
                         k++;
                     }
@@ -170,12 +212,17 @@ TASK(periodicTask) {
 
                     // Increment i before calculating j because the condition of the while statement is based on i.
                     // So I need to compute j with the incremented value.
+
+#ifdef DEBUG180
+
                     time180fine = micros();
                     Serial.print("          Time difference 180000000us: ");
                     Serial.println(time180fine - time180inizio);
+
+#endif
+
                     i++;
                     j = string_lenght(frasi[i]);
-                    timeinizio = micros();
                     cnt = 0;               // reset the counter
                     digitalWrite(13, LOW); // switch off the LED
                     k = 0;
@@ -183,16 +230,21 @@ TASK(periodicTask) {
                         WaitEvent(evento);
                         GetEvent(periodicTask, &mask);
                         ClearEvent(evento);
+#define DEBUG5
+                        if (prima_volta) {
+                            time5inizio = micros();
+                            valore = 1;
+                            prima_volta = 0;
+                        }
+#endif
                         k++;
 #ifdef DEBUG
                         Serial.println("0         Pause");
 #endif
                     }
-                    timefine = micros();
-                    Serial.print("          Time difference 500000us: ");
-                    Serial.println(timefine - timeinizio);
-                    time180inizio = micros();
+#ifdef DEBUG180
                     primo_giro = 1;
+#endif
                 }
             }
         }

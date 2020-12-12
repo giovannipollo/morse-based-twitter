@@ -2,8 +2,9 @@
 \usepackage{graphicx}
 \usepackage{titling}
 \usepackage{amsmath}
+\usepackage{hyperref}
 
-\title{\Huge Assignment OSEK}
+\title{\Huge Assignment OSEK \\ \LARGE Trampoline \& Arduino}
 \author{\huge Giovanni Pollo \\ \\ \huge 290136}
 \date{}
 \renewcommand\maketitlehooka{
@@ -42,18 +43,38 @@ The \(180s\) pause is implemented using a counter (variable \emph{cnt}) that cou
 The \(0.5s\) pause is done in the same way, with the only difference that the value of the counter variable is \(5\).
 
 
-\section{Timing \& Tolerance}
+\section{Timing \& Errors}
 
 As explained in the first paragraph, the code is based on a periodic alarm (every \(100ms\)) that activates an event. The only problem is that the \emph{SystemCounter} is the same as the \emph{Systick} used in Arduino, that counts a tick every \(1024 \mu s\). To obtain \(100ms\) period, the value assigned to  \textbf{CYCLETIME} must be:
 
 
 
 \begin{align*}
-  CYCLETIME & = \frac{event\_time}{tick\_time} = \frac{100ms}{1024\mu s} = \frac{100 \cdot 10^{-3} s}{1024 \cdot 10^{-6} s} \\
+  CYCLETIME & = \frac{event\_time}{tick\_time} = \frac{100ms}{1024\mu s} = \frac{100 \cdot 10^{-3} s}{1024 \cdot 10^{-6} s} \\[1ex]
             & = 97.65625 \approx 98
-\end{align*}
+\end{align*} \\
+The choice for CYCLETIME is 98. \\
 
-The choice for CYCLETIME is 98.
+To analyze the errors, I used the Arduino function \textbf{micros()}. We can identify 3 errors:
+\begin{itemize}
+  \item \(100ms\): For this error, I obtained \(0.228\%\)
+        \begin{align*}
+          Error & = \frac{ideal\_value - value\_with\_micros}{ideal\_value} \\[1ex]
+          Error & = \frac{100000\mu s - 99772\mu s}{100000\mu s} = 0.228\%
+        \end{align*}
+  \item \(500ms\): For this error, I obtained:
+        \begin{align*}
+          Error & = \frac{ideal\_value - value\_with\_micros}{ideal\_value} \\[1ex]
+          Error & = \frac{500000\mu s - 498128\mu s}{500000\mu s} = 0.374\%
+        \end{align*}
+  \item \(180s\): For this error, I obtained:
+        \begin{align*}
+          Error & = \frac{ideal\_value - value\_with\_micros}{ideal\_value}          \\[1ex]
+          Error & = \frac{180000000\mu s - 180500000\mu s}{180000000\mu s} = 0.278\%
+        \end{align*}
+\end{itemize}
+
+
 \section{Memory Occupation}
 
 In order to analyze the memory occupation, I compared my solution with a blank code (an empty PeriodicTask triggered every \(100ms\)).
@@ -85,7 +106,7 @@ In order to analyze the memory occupation, I compared my solution with a blank c
   \label{Table2}
 \end{table}
 
-Discuss
+By comparing \autoref{Table1} and table \autoref{Table2}, it's easy to see the benefit of the online translation. If fact, because we translate letter by letter, the data occupation doesn't increase too much.
 
 
 \end{document}
