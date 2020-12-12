@@ -7,8 +7,8 @@
 
 // #define DEBUG
 // #define DEBUG180
-// #define DEGUB1
-// #define DEBUG5
+// #define DEBUG1
+#define DEBUG5
 
 #ifdef DEBUG180
 unsigned long time180inizio, time180fine;
@@ -93,6 +93,7 @@ TASK(periodicTask) {
     int pos = 0;
 
 #ifdef DEBUG180
+    int valore_180 = 1;
     int primo_giro = 1;
 #endif
 
@@ -157,20 +158,20 @@ TASK(periodicTask) {
                 // write value of leds
                 k = 0;
                 while (k < index && cnt < MAXCNT) {
-#ifdef DEBUG1
-                    time1inizio = micros();
-#endif
                     WaitEvent(evento);
                     GetEvent(periodicTask, &mask);
 #ifdef DEBUG1
-                    time1fine = micros();
+                    time1inizio = micros();
                     Serial.print("          Time difference 100000us: ");
-                    Serial.println(time1fine - time1inizio);
+                    Serial.println(time1inizio - time1fine);
+                    time1fine = time1inizio;
+
 #endif
 
 #ifdef DEBUG180
                     if (primo_giro) {
                         time180inizio = micros();
+                        valore_180 = 1;
                         primo_giro = 0;
                     }
 #endif
@@ -213,14 +214,6 @@ TASK(periodicTask) {
                     // Increment i before calculating j because the condition of the while statement is based on i.
                     // So I need to compute j with the incremented value.
 
-#ifdef DEBUG180
-
-                    time180fine = micros();
-                    Serial.print("          Time difference 180000000us: ");
-                    Serial.println(time180fine - time180inizio);
-
-#endif
-
                     i++;
                     j = string_lenght(frasi[i]);
                     cnt = 0;               // reset the counter
@@ -229,22 +222,29 @@ TASK(periodicTask) {
                     while (k < 5) {
                         WaitEvent(evento);
                         GetEvent(periodicTask, &mask);
-                        ClearEvent(evento);
-#define DEBUG5
+#ifdef DEBUG5
                         if (prima_volta) {
                             time5inizio = micros();
                             valore = 1;
                             prima_volta = 0;
                         }
 #endif
+                        ClearEvent(evento);
+#ifdef DEBUG180
+                        if (valore_180) {
+                            time180fine = micros();
+                            Serial.print("          Time difference 180000000us: ");
+                            Serial.println(time180fine - time180inizio);
+                            valore_180 = 0;
+                            primo_giro = 1;
+                        }
+#endif
+
                         k++;
 #ifdef DEBUG
                         Serial.println("0         Pause");
 #endif
                     }
-#ifdef DEBUG180
-                    primo_giro = 1;
-#endif
                 }
             }
         }
