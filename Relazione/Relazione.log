@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.11.2)  12 DEC 2020 07:18
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.11.2)  12 DEC 2020 17:22
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -256,35 +256,30 @@ LaTeX Info: Redefining \nameref on input line 16.
 \@outlinefile=\write3
 \openout3 = `Relazione.out'.
 
-<Immagini/LogoPolito.png, id=16, 1204.5pt x 1204.5pt>
+<Immagini/LogoPolito.png, id=24, 1204.5pt x 1204.5pt>
 File: Immagini/LogoPolito.png Graphic file (type png)
 <use Immagini/LogoPolito.png>
 Package pdftex.def Info: Immagini/LogoPolito.png  used on input line 22.
 (pdftex.def)             Requested size: 224.2479pt x 224.2442pt.
  [1
 
-{/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map} </Users/giovanni/GitHub/Assignment-OSES/Relazione/Immagini/LogoPolito.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 55--57
-
- []
-
-[1] [2] (/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.aux)
+{/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map} </Users/giovanni/GitHub/Assignment-OSES/Relazione/Immagini/LogoPolito.png>] [1] [2] (/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.aux)
 Package rerunfilecheck Info: File `Relazione.out' has not changed.
-(rerunfilecheck)             Checksum: FDF7EA94B12CF3CDF120BA3FEE1A2755;164.
+(rerunfilecheck)             Checksum: 784C815AC4FFB7BEB157B816C2A33BDA;274.
  ) 
 Here is how much of TeX's memory you used:
- 5814 strings out of 479485
- 89112 string characters out of 5871978
- 397978 words of memory out of 5000000
- 22721 multiletter control sequences out of 15000+600000
- 541443 words of font info for 51 fonts, out of 8000000 for 9000
+ 5824 strings out of 479485
+ 89251 string characters out of 5871978
+ 398081 words of memory out of 5000000
+ 22727 multiletter control sequences out of 15000+600000
+ 541750 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 66i,12n,72p,431b,390s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 66i,12n,72p,442b,392s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on /Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.pdf (3 pages, 396351 bytes).
+Output written on /Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.pdf (3 pages, 398445 bytes).
 PDF statistics:
- 85 PDF objects out of 1000 (max. 8388607)
- 67 compressed objects within 1 object stream
- 10 named destinations out of 1000 (max. 500000)
- 30 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 99 PDF objects out of 1000 (max. 8388607)
+ 81 compressed objects within 1 object stream
+ 14 named destinations out of 1000 (max. 500000)
+ 46 words of extra memory for PDF output out of 10000 (max. 10000000)
 

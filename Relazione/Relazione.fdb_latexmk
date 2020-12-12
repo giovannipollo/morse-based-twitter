@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1607753913 "/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.tex" "/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.pdf" "Relazione" 1607760565
-  "/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.aux" 1607753915 1442 df59c8f4fc1e91254b3211ac84b6b7fc ""
-  "/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.tex" 1607760565 4153 53f310108ced98d6a07ef6b4c0ddd6db ""
+["pdflatex"] 1607790135 "/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.tex" "/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.pdf" "Relazione" 1607790136
+  "/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.aux" 1607790136 1838 a49f8e594404c7e7a39c5af4a9e94873 ""
+  "/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.tex" 1607790134 4854 3bdad4a560b083947828033e902fea2c ""
   "/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2020/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2020/texmf-dist/fonts/tfm/jknappen/ec/tcrm1000.tfm" 1136768653 1536 e07581a4bb3136ece9eeb4c3ffab8233 ""
@@ -82,13 +82,13 @@
   "/usr/local/texlive/2020/texmf-var/web2c/pdftex/pdflatex.fmt" 1604312780 2550025 ce263cbf509e957c85ee5adfd48165ed ""
   "/usr/local/texlive/2020/texmf.cnf" 1586288231 577 d60164b4589a341208aff7a667fbbdcb ""
   "Immagini/LogoPolito.png" 1607096159 377670 f66c6788d4aff63346b10d18d75fb5b2 ""
-  "Relazione.aux" 1607753915 1442 df59c8f4fc1e91254b3211ac84b6b7fc "pdflatex"
-  "Relazione.out" 1607753915 164 fdf7ea94b12cf3cdf120ba3fee1a2755 "pdflatex"
-  "Relazione.tex" 1607760565 4153 53f310108ced98d6a07ef6b4c0ddd6db ""
+  "Relazione.aux" 1607790136 1838 a49f8e594404c7e7a39c5af4a9e94873 "pdflatex"
+  "Relazione.out" 1607790136 274 784c815ac4ffb7beb157b816c2a33bda "pdflatex"
+  "Relazione.tex" 1607790134 4854 3bdad4a560b083947828033e902fea2c ""
   (generated)
-  "Relazione.pdf"
-  "Relazione.out"
-  "/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.log"
-  "/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.pdf"
   "Relazione.aux"
   "Relazione.log"
+  "/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.log"
+  "Relazione.out"
+  "/Users/giovanni/GitHub/Assignment-OSES/Relazione/Relazione.pdf"
+  "Relazione.pdf"

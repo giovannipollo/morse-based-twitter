@@ -44,8 +44,9 @@ The \(0.5s\) pause is done in the same way, with the only difference that the va
 
 
 \section{Timing \& Errors}
+\subsection{Timing} \label{Timing}
 
-As explained in the first paragraph, the code is based on a periodic alarm (every \(100ms\)) that activates an event. The only problem is that the \emph{SystemCounter} is the same as the \emph{Systick} used in Arduino, that counts a tick every \(1024 \mu s\). To obtain \(100ms\) period, the value assigned to  \textbf{CYCLETIME} must be:
+As explained in the first paragraph, the code is based on a periodic alarm (every \(100ms\)) that activates an event. The only problem is that the Trampoline \emph{SystemCounter} is the same as the \emph{Systick} used in Arduino, that counts a tick every \(1024 \mu s\). To obtain \(100ms\) period, the value assigned to  \textbf{CYCLETIME} must be:
 
 
 
@@ -53,26 +54,38 @@ As explained in the first paragraph, the code is based on a periodic alarm (ever
   CYCLETIME & = \frac{event\_time}{tick\_time} = \frac{100ms}{1024\mu s} = \frac{100 \cdot 10^{-3} s}{1024 \cdot 10^{-6} s} \\[1ex]
             & = 97.65625 \approx 98
 \end{align*} \\
-The choice for CYCLETIME is 98. \\
+The choice for CYCLETIME is 98. We can now compute what is the real value for \(100ms\):
+\begin{equation*}
+  real\_100ms = 98 \cdot 1024\mu s = 100.352ms
+\end{equation*}
+From this it is easy to evaluate the default error:
+\begin{align}
+  Default\_Error & = \frac{real\_100ms - 100ms}{100ms}                  \label{Default_Error1} \\[1ex]
+  Default\_Error & = \frac{100.352ms - 100ms}{100ms} = 0.352\%    \label{Default_Error2}
+\end{align}
 
-To analyze the errors, I used the Arduino function \textbf{micros()}. We can identify 3 errors:
+
+\subsection{Errors}
+To analyze the errors of the program, I used the Arduino function \textbf{micros()}. We can identify 3 errors:
 \begin{itemize}
-  \item \(100ms\): For this error, I obtained \(0.228\%\)
+  \item \(100ms\): For this error, I obtained \(0.352\%\)
         \begin{align*}
-          Error & = \frac{ideal\_value - value\_with\_micros}{ideal\_value} \\[1ex]
-          Error & = \frac{100000\mu s - 99772\mu s}{100000\mu s} = 0.228\%
+          Error & = \frac{value\_with\_micros - ideal\_value}{ideal\_value} \\[1ex]
+          Error & = \frac{100352\mu s - 100000\mu s}{100000\mu s} = 0.352\%
         \end{align*}
   \item \(500ms\): For this error, I obtained:
         \begin{align*}
-          Error & = \frac{ideal\_value - value\_with\_micros}{ideal\_value} \\[1ex]
-          Error & = \frac{500000\mu s - 498128\mu s}{500000\mu s} = 0.374\%
+          Error & = \frac{value\_with\_micros - ideal\_value}{ideal\_value} \\[1ex]
+          Error & = \frac{501760\mu s - 500000\mu s}{500000\mu s} = 0.352\%
         \end{align*}
   \item \(180s\): For this error, I obtained:
         \begin{align*}
-          Error & = \frac{ideal\_value - value\_with\_micros}{ideal\_value}          \\[1ex]
-          Error & = \frac{180000000\mu s - 180500000\mu s}{180000000\mu s} = 0.278\%
+          Error & = \frac{value\_with\_micros - ideal\_value}{ideal\_value}          \\[1ex]
+          Error & = \frac{180633600\mu s - 180000000\mu s}{180000000\mu s} = 0.352\%
         \end{align*}
 \end{itemize}
+
+It's easy to notice that all the errors are the same, and they are all coeherent with the \emph{Default\_Error} evalueted in section \ref{Timing}, with the equations \ref{Default_Error1} and \ref{Default_Error2}
 
 
 \section{Memory Occupation}
