@@ -1,0 +1,125 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+\usepackage{titling}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\title{\Huge Assignment OSEK \\ \LARGE Trampoline \& Arduino}
+\author{\huge Giovanni Pollo \\ \\ \huge 290136}
+\date{}
+\renewcommand\maketitlehooka{
+  \begin{center}
+    \includegraphics[width=0.65\textwidth]{Immagini/LogoPolito.png}
+  \end{center}%
+}
+
+\begin{document}
+\begin{titlepage}
+  \centering
+  \vspace{2px}
+\end{titlepage}
+\maketitle
+
+
+\pagenumbering{gobble} % remove page number for the title
+
+
+\newpage
+
+\pagenumbering{arabic} % Start page number from 1
+
+\section{Structure \& Algorithm}
+The structure chosen is based on an extended task. There is an event, that is triggered every \(100ms\), used to guarantee the timing of the system.
+
+The conversion is done online, thanks to the global variable \emph{LED}. The external loop is used to read all sentences, while the internal one is used to analyze every single letter. Every character is compared to 'A', and the value of \emph{pos} is computed.
+
+After having obtained \emph{pos}, we can get the morse code of the considered letter and then convert it into a sequence of 0 and 1, that it is saved in the variable \emph{LED} thanks to the \textbf{populateLED} function.
+
+The \(180s\) pause is implemented using a counter (variable \emph{cnt}) that counts up to 1800. In fact:
+\begin{equation}
+  max\_cnt\_value = \frac{pause\_time}{event\_time} = \frac{180\ s}{0.1\ s} = 1800
+\end{equation}
+
+The \(0.5s\) pause is done in the same way, with the only difference that the value of the counter variable is \(5\).
+
+
+\section{Timing \& Errors}
+\subsection{Timing} \label{Timing}
+
+As explained in the first paragraph, the code is based on a periodic alarm (every \(100ms\)) that activates an event. The only problem is that the Trampoline \emph{SystemCounter} is the same as the \emph{Systick} used in Arduino, that counts a tick every \(1024 \mu s\). To obtain \(100ms\) period, the value assigned to  \textbf{CYCLETIME} must be:
+
+
+
+\begin{align*}
+  CYCLETIME & = \frac{event\_time}{tick\_time} = \frac{100ms}{1024\mu s} = \frac{100 \cdot 10^{-3} s}{1024 \cdot 10^{-6} s} \\[1ex]
+            & = 97.65625 \approx 98
+\end{align*} \\
+The choice for CYCLETIME is 98. We can now compute what is the real value for \(100ms\):
+\begin{equation*}
+  real\_100ms = 98 \cdot 1024\mu s = 100.352ms
+\end{equation*}
+From this it is easy to evaluate the default error:
+\begin{align}
+  Default\_Error & = \frac{real\_100ms - 100ms}{100ms}                  \label{Default_Error1} \\[1ex]
+  Default\_Error & = \frac{100.352ms - 100ms}{100ms} = 0.352\%    \label{Default_Error2}
+\end{align}
+
+
+\subsection{Errors}
+To analyze the errors of the program, I used the Arduino function \textbf{micros()}. We can identify 3 errors:
+\begin{itemize}
+  \item \(100ms\): For this error, I obtained \(0.352\%\)
+        \begin{align*}
+          Error & = \frac{value\_with\_micros - ideal\_value}{ideal\_value} \\[1ex]
+          Error & = \frac{100352\mu s - 100000\mu s}{100000\mu s} = 0.352\%
+        \end{align*}
+  \item \(500ms\): For this error, I obtained:
+        \begin{align*}
+          Error & = \frac{value\_with\_micros - ideal\_value}{ideal\_value} \\[1ex]
+          Error & = \frac{501760\mu s - 500000\mu s}{500000\mu s} = 0.352\%
+        \end{align*}
+  \item \(180s\): For this error, I obtained:
+        \begin{align*}
+          Error & = \frac{value\_with\_micros - ideal\_value}{ideal\_value}          \\[1ex]
+          Error & = \frac{180633600\mu s - 180000000\mu s}{180000000\mu s} = 0.352\%
+        \end{align*}
+\end{itemize}
+
+It's easy to notice that all the errors are the same, and they are all coeherent with the \emph{Default\_Error} evalueted in section \ref{Timing}, with the equations \ref{Default_Error1} and \ref{Default_Error2}
+
+
+\section{Memory Occupation}
+
+In order to analyze the memory occupation, I compared my solution with a blank code (an empty PeriodicTask triggered every \(100ms\)).
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|| c || c || c || c ||}
+    \hline
+    \textbf{Text} & \textbf{Data} & \textbf{Bss} & \textbf{Dec} \\
+    \hline
+    5730 Bytes    & 278 Bytes     & 382 Bytes    & 6390 Bytes   \\
+    \hline
+  \end{tabular}
+  \caption{Blank code memory occupation}
+  \label{Table1}
+\end{table}
+
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|| c || c || c || c ||}
+    \hline
+    \textbf{Text} & \textbf{Data} & \textbf{Bss} & \textbf{Dec} \\
+    \hline
+    5730 Bytes    & 278 Bytes     & 382 Bytes    & 6390 Bytes   \\
+    \hline
+  \end{tabular}
+  \caption{My solution memory occupation}
+  \label{Table2}
+\end{table}
+
+By comparing \autoref{Table1} and table \autoref{Table2}, it's easy to see the benefit of the online translation. If fact, because we translate letter by letter, the data occupation doesn't increase too much.
+
+
+\end{document}
