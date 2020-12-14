@@ -1,8 +1,9 @@
 #include "Arduino.h"
 #include "tpl_os.h"
 
+// define the number of setences and the value of the CNT for the pause
 #define NUMFRASI 5
-#define MAXCNT 900
+#define MAXCNT 1800
 
 static const char *alfabeto[] = {
     ".-",   //A
@@ -33,9 +34,6 @@ static const char *alfabeto[] = {
     "--..", //Z
 };
 
-static const int len_alfabeto[] = {2, 4, 4, 3, 1, 4, 3, 4, 2, 4, 3, 4, 2, 2, 3, 4, 4, 3, 3, 1, 3, 4, 3, 4, 4, 4};
-static const int len_frase[] = {54, 59, 64, 31, 53};
-
 static const char *frasi[] = {
     "A FEATHER IN THE HAND IS BETTER THAN A BIRD IN THE AIR",
     "A SHORT PENCIL IS USUALLY BETTER THAN A LONG MEMORY ANY DAY",
@@ -44,105 +42,100 @@ static const char *frasi[] = {
     "ALL THE EFFORT YOU ARE MAKING WILL ULTIMATELY PAY OFF",
 };
 
-static char LED[50];
+static char LED[20];
 
-void setup() {
-    // Serial.begin(115200);
-    // initialize digital pin 13 as an output.
-    pinMode(13, OUTPUT);
+uint8 string_lenght(const char *string) {
+    uint8 i = 0;
+    while (string[i] != '\0') {
+        i++;
+    }
+    return i;
 }
 
-void populateLED(char value, int num_volte, int *index) {
-    int i;
+void populateLED(char value, uint8 num_volte, uint8 *index) {
+    uint8 i;
     for (i = *index; i < num_volte + *index; i++) {
         LED[i] = value;
     }
     *index = i;
 }
 
+void setup() {
+
+    pinMode(13, OUTPUT); // initialize digital pin 13 as an output.
+}
+
 TASK(periodicTask) {
 
-    int index = 0;
-    int cnt = 0;
+    uint8 index = 0;
+    uint16 cnt = 0;
     int pos = 0;
-    // Serial.println("");
+    uint8 i, j, k;
     EventMaskType mask;
     while (1) {
-        for (int k = 0; k < NUMFRASI; k++) {
-            // Serial.print("Numero Frase: ");
-            // Serial.println(k);
-            for (int i = 0; i < len_frase[k]; i++) {
-                if (frasi[k][i] != 32) {
-                    pos = frasi[k][i] - 'A';
-                    // Serial.print("Lettera: ");
-                    // Serial.print(frasi[k][i]);
-                    // Serial.print("      Posizione: ");
-                    // Serial.println(pos);
-                    for (int l = 0; l < len_alfabeto[pos]; l++) {
-                        if (alfabeto[pos][l] == '.') {
-                            populateLED('1', 1, &index);
-                        } else {
-                            populateLED('1', 3, &index);
-                        }
-                        populateLED('0', 1, &index); // 0 at the end of the symbol
-                    }
-                    populateLED('0', 2, &index); // 0 at the end of the codeword
+        i = 0;
+        while (i < NUMFRASI) { //loop on all sentences
+            j = 0;
+            while (j < string_lenght(frasi[i])) { // loop on one sentence
+                pos = frasi[i][j] - 'A';
+                k = 0;
+                // pos >= 0 is used ot avoid looping in case I have a space. In fact space is 32 in ascii and 32 - 'A' is < 0.
+                // So I loop only if pos is >= 0
+                while (pos >= 0 && k < string_lenght(alfabeto[pos])) {
+                    if (alfabeto[pos][k] == '.')
+                        populateLED('1', 1, &index); // 1 for the symbol .
+                    else
+                        populateLED('1', 3, &index); // 1 for the symbol -
 
-                    // missing end of the frase & sapce (end of the word)
-                    if (i == len_frase[k] - 1) {
-                        populateLED('0', 4, &index); // 0 at the end of the codeword
-                    }
-                } else {
-                    populateLED('0', 4, &index); // 0 for the space
+                    populateLED('0', 1, &index); // 0 at the end of the symbol
+                    k++;
+
+                    if (k == string_lenght(alfabeto[pos]))
+                        populateLED('0', 2, &index); // 0 at the end of the codeword
                 }
 
-                // write value of leds
+                if (frasi[i][j] == 32 || j == string_lenght(frasi[i]) - 1)
+                    populateLED('0', 4, &index); // 0 because of a space or because I finish the sentence
 
-                for (int m = 0; m < index && cnt < MAXCNT; m++) {
+                j++;
+
+                // write value of leds
+                k = 0;
+                while (k < index && cnt < MAXCNT) {
                     WaitEvent(evento);
                     GetEvent(periodicTask, &mask);
                     if (mask) {
                         ClearEvent(evento);
-                        if (LED[m] == '1') {
+                        if (LED[k] == '1')
                             digitalWrite(13, HIGH);
-                            // Serial.print("1");
-                            // Serial.print("         cnt = ");
-                            //Serial.println(cnt);
-                        } else {
+                        else
                             digitalWrite(13, LOW);
-                            // Serial.print("0");
-                            // Serial.print("         cnt = ");
-                            // Serial.println(cnt);
-                        }
                         cnt++;
+                        k++;
                     }
                 }
                 index = 0; // because I finish a codeword
 
-                // check if the end of the loop then restart
-
-                if (i == len_frase[k] - 1) {
-                    i = -1; // -1 Because at the next cycle it will increment by 1 and so it will return to 0
-                }
-
-                // pause
-
+                // pause if cnt is equal to MAXCNT
                 if (cnt == MAXCNT) {
-                    i = len_frase[k]; // così da uscire dal loop
-                    cnt = 0;
-                    for (int j = 0; j < 5; j++) {
+
+                    // Increment i before calculating j because the condition of the while statement is based on i.
+                    // So I need to compute j with the incremented value.
+
+                    i++;
+                    j = string_lenght(frasi[i]);
+                    cnt = 0;               // reset the counter
+                    digitalWrite(13, LOW); // switch off the LED
+                    k = 0;
+                    while (k < 5) {
                         WaitEvent(evento);
                         GetEvent(periodicTask, &mask);
                         if (mask) {
                             ClearEvent(evento);
-                            digitalWrite(13, LOW);
-                            // Serial.println("0         Pause");
+                            k++;
                         }
                     }
                 }
-            }
-            if (k == NUMFRASI - 1) {
-                k = -1; // -1 Because at the next cycle it will increment by 1 and so it will return to 0
             }
         }
     }
