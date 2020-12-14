@@ -3,12 +3,12 @@
 
 // define the number of setences and the value of the CNT for the pause
 #define NUMFRASI 5
-#define MAXCNT 50
+#define MAXCNT 100
 
-// #define DEBUG
+#define DEBUG
 // #define DEBUG180
 // #define DEBUG1
-#define DEBUG5
+// #define DEBUG5
 
 #ifdef DEBUG180
 unsigned long time180inizio, time180fine;
@@ -229,21 +229,23 @@ TASK(periodicTask) {
                             prima_volta = 0;
                         }
 #endif
-                        ClearEvent(evento);
+                        if (mask) {
+                            ClearEvent(evento);
 #ifdef DEBUG180
-                        if (valore_180) {
-                            time180fine = micros();
-                            Serial.print("          Time difference 180000000us: ");
-                            Serial.println(time180fine - time180inizio);
-                            valore_180 = 0;
-                            primo_giro = 1;
-                        }
+                            if (valore_180) {
+                                time180fine = micros();
+                                Serial.print("          Time difference 180000000us: ");
+                                Serial.println(time180fine - time180inizio);
+                                valore_180 = 0;
+                                primo_giro = 1;
+                            }
 #endif
 
-                        k++;
+                            k++;
 #ifdef DEBUG
-                        Serial.println("0         Pause");
+                            Serial.println("0         Pause");
 #endif
+                        }
                     }
                 }
             }
