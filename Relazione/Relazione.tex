@@ -29,10 +29,8 @@
 \pagenumbering{arabic} % Start page number from 1
 
 \section{Structure \& Algorithm}
-The structure chosen is based on a single extended task. The main reason is simplicity. Thanks to a single task, the solution is as straightforward as possible, and the memory occupation is also very low.
-\newline
+The program is developed on Trampoline + Arduino, and the structure chosen is based on a single extended task. The main reason is simplicity. Thanks to a single task, the solution is as straightforward as possible, and the memory occupation is also very low. To guarantee the system's timing, I opted for an event triggered every \(100ms\).
 
-To guarantee the system's timing, I opted for an event triggered every \(100ms\). \\
 The conversion is softcoded, thanks to the global variable \emph{LED}. The external loop reads all sentences, while the internal one analyzes every single letter. The program compares every character against 'A', and it computes the value of \emph{pos}. \\
 Thanks to the variable \emph{pos}, we can get the morse code of the analyzed letter, convert it into a sequence of 0 and 1, and then save the output inside the variable \emph{LED} thanks to the \textbf{populateLED()} function. \\
 Another critical method is the \textbf{string\_lenght()} one, which has been included to keep the code as general as possible. Furthermor, by not hardcoding the sentences' length, we can save a little bit of data memory.
