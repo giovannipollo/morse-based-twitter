@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+ \documentclass[a4paper]{article}
 \usepackage{graphicx}
 \usepackage{titling}
 \usepackage{amsmath}
@@ -30,59 +30,55 @@
 
 \section{Structure \& Algorithm}
 The structure chosen is based on a single extended task. The main reason is simplicity. Thanks to a single task, the solution is as straightforward as possible, and the memory occupation is also very low.
+\newline
 
-To guarantee the system's timing, I opted for an event triggered every \(100ms\).
-
-The conversion is online, thanks to the global variable \emph{LED}. The external loop reads all sentences, while the internal one analyzes every single letter. The program compares every character against 'A', and it computes the value of \emph{pos}.
-
-Thanks to the variable \emph{pos}, we can get the morse code of the analyzed letter, convert it into a sequence of 0 and 1, and then save the output inside the variable \emph{LED} thanks to the \textbf{populateLED} function.
+To guarantee the system's timing, I opted for an event triggered every \(100ms\). \\
+The conversion is softcoded, thanks to the global variable \emph{LED}. The external loop reads all sentences, while the internal one analyzes every single letter. The program compares every character against 'A', and it computes the value of \emph{pos}. \\
+Thanks to the variable \emph{pos}, we can get the morse code of the analyzed letter, convert it into a sequence of 0 and 1, and then save the output inside the variable \emph{LED} thanks to the \textbf{populateLED()} function. \\
+Another critical method is the \textbf{string\_lenght()} one, which has been included to keep the code as general as possible. Furthermor, by not hardcoding the sentences' length, we can save a little bit of data memory.
+\newline
 
 To implement the \(180s\) pause, I opted for a counter (variable \emph{cnt}) which maximum value is 1800. In fact:
 \begin{equation}
   max\_cnt\_value = \frac{pause\_time}{event\_time} = \frac{180\ s}{0.1\ s} = 1800
 \end{equation}
-
 Similarly, the \(0.5s\) pause uses a counter in which the maximum value is \(5\).
+\newline
 
+The last thing to mention is \textbf{STACKSIZE}. The minimum value I found in order to have a correct output is 112. Because 112 is not a power of 2, I decide to use 128.
 \section{Timing \& Errors}
 \subsection{Timing} \label{Timing}
-
 As explained in the first paragraph, the code has a periodic alarm (every \(100ms\)) that activates an event. The main problem is that the Trampoline \emph{SystemCounter} is the same as the \emph{Systick} used in Arduino, which counts a tick every \(1024 \mu s\). To obtain \(100ms\) period, the value assigned to  \textbf{CYCLETIME} must be:
-
-
-
 \begin{align*}
-  CYCLETIME & = \frac{event\_time}{tick\_time} = \frac{100ms}{1024\mu s} = \frac{100 \cdot 10^{-3} s}{1024 \cdot 10^{-6} s} \\[1ex]
+  CYCLETIME & = \frac{event\_time}{tick\_time} = \frac{100ms}{1024\mu s} = \frac{100 \cdot 10^{-3} s}{1024 \cdot 10^{-6} s} \\[0.5ex]
             & = 97.65625 \approx 98
-\end{align*} \\
+\end{align*}
 The choice for CYCLETIME is, therefore, 98. We can now compute what the real value for \(100ms\) is:
 \begin{equation*}
   real\_100ms = 98 \cdot 1024\mu s = 100.352ms
 \end{equation*}
 From this, it is easy to evaluate the default error:
 \begin{align}
-  Default\_Error & = \frac{real\_100ms - 100ms}{100ms}                  \label{Default_Error1} \\[1ex]
+  Default\_Error & = \frac{real\_100ms - 100ms}{100ms}                  \label{Default_Error1} \\[0.5ex]
   Default\_Error & = \frac{100.352ms - 100ms}{100ms} = 0.352\%    \label{Default_Error2}
 \end{align}
-
-\newpage
 
 \subsection{Errors}
 To analyze the program's timing errors, I used the Arduino function \textbf{micros()}. We can identify three errors:
 \begin{enumerate}
   \item \(100ms\): I obtained \(0.352\%\) error
         \begin{align*}
-          Error & = \frac{value\_with\_micros - ideal\_value}{ideal\_value} \\[1ex]
+          Error & = \frac{value\_with\_micros - ideal\_value}{ideal\_value} \\[0.5ex]
           Error & = \frac{100352\mu s - 100000\mu s}{100000\mu s} = 0.352\%
         \end{align*}
   \item \(500ms\): I obtained \(0.352\%\) error
         \begin{align*}
-          Error & = \frac{value\_with\_micros - ideal\_value}{ideal\_value} \\[1ex]
+          Error & = \frac{value\_with\_micros - ideal\_value}{ideal\_value} \\[0.5ex]
           Error & = \frac{501760\mu s - 500000\mu s}{500000\mu s} = 0.352\%
         \end{align*}
   \item \(180s\): I obtained \(0.352\%\) error
         \begin{align*}
-          Error & = \frac{value\_with\_micros - ideal\_value}{ideal\_value}          \\[1ex]
+          Error & = \frac{value\_with\_micros - ideal\_value}{ideal\_value}          \\[0.5ex]
           Error & = \frac{180633600\mu s - 180000000\mu s}{180000000\mu s} = 0.352\%
         \end{align*}
 \end{enumerate}
