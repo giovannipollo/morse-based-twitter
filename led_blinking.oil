@@ -42,7 +42,7 @@ CPU test {
        APPMODE = stdAppmode;
     };
     ACTIVATION = 1;
-    STACKSIZE = 112;
+    STACKSIZE = 128;
     SCHEDULE = FULL;
     EVENT = evento;
   };

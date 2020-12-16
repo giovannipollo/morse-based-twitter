@@ -2,6 +2,7 @@
 #include "tpl_os.h"
 
 // define the number of setences and the value of the CNT for the pause
+// Use DEFINE in order to make the code general
 #define NUMFRASI 5
 #define MAXCNT 1800
 
@@ -42,7 +43,15 @@ static const char *frasi[] = {
     "ALL THE EFFORT YOU ARE MAKING WILL ULTIMATELY PAY OFF",
 };
 
-static char LED[20];
+static char LED[20]; // use to save the sequence of 0 and 1 for a single letter
+// 20 because the longest letter is Q or Y or J, that can have maximum 20 characters. For example Q = "--.-"
+// -    1110
+// -    1110
+// .    10
+// -    1110
+//      00
+//      0000
+// If we count, we can have maximum 20 char
 
 uint8 string_lenght(const char *string) {
     uint8 i = 0;
@@ -61,7 +70,6 @@ void populateLED(char value, uint8 num_volte, uint8 *index) {
 }
 
 void setup() {
-
     pinMode(13, OUTPUT); // initialize digital pin 13 as an output.
 }
 
@@ -76,9 +84,10 @@ TASK(periodicTask) {
         i = 0;
         while (i < NUMFRASI) { //loop on all sentences
             j = 0;
-            while (j < string_lenght(frasi[i])) { // loop on one sentence
-                pos = frasi[i][j] - 'A';
+            while (j < string_lenght(frasi[i])) { // loop on the letters of one sentence
+                pos = frasi[i][j] - 'A';          //offset compared to A
                 k = 0;
+
                 // pos >= 0 is used ot avoid looping in case I have a space. In fact space is 32 in ascii and 32 - 'A' is < 0.
                 // So I loop only if pos is >= 0
                 while (pos >= 0 && k < string_lenght(alfabeto[pos])) {
@@ -99,7 +108,7 @@ TASK(periodicTask) {
 
                 j++;
 
-                // write value of leds
+                // write value of leds with digitalWrite
                 k = 0;
                 while (k < index && cnt < MAXCNT) {
                     WaitEvent(evento);
@@ -110,23 +119,26 @@ TASK(periodicTask) {
                             digitalWrite(13, HIGH);
                         else
                             digitalWrite(13, LOW);
+
                         cnt++;
                         k++;
                     }
                 }
                 index = 0; // because I finish a codeword
 
-                // pause if cnt is equal to MAXCNT
+                // pause if cnt is equal to MAXCNT, because I reached 180s
                 if (cnt == MAXCNT) {
 
-                    // Increment i before calculating j because the condition of the while statement is based on i.
+                    // Increment i before calculating j because the condition of the while(j < string_lenght(frasi[i])) statement is based on i.
                     // So I need to compute j with the incremented value.
 
                     i++;
-                    j = string_lenght(frasi[i]);
-                    cnt = 0;               // reset the counter
-                    digitalWrite(13, LOW); // switch off the LED
+                    j = string_lenght(frasi[i]); // value of j in order to exit from the loop while(j < string_lenght(frasi[i])) and go to the next sentence
+                    cnt = 0;                     // reset the counter
+                    digitalWrite(13, LOW);       // switch off the LED
                     k = 0;
+
+                    // 500ms pause
                     while (k < 5) {
                         WaitEvent(evento);
                         GetEvent(periodicTask, &mask);
